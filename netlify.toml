@@ -1,0 +1,80 @@
+# Department of One — Netlify configuration
+# Static site. No build step, no dependencies.
+
+[build]
+  publish = "."
+  command = ""
+
+# Pretty URLs: /services -> services.html is handled by Netlify's default
+# "Pretty URLs" asset optimization, but these redirects make it explicit and
+# survive that setting being turned off.
+[[redirects]]
+  from = "/services"
+  to = "/services.html"
+  status = 200
+
+[[redirects]]
+  from = "/about"
+  to = "/about.html"
+  status = 200
+
+[[redirects]]
+  from = "/work"
+  to = "/work.html"
+  status = 200
+
+[[redirects]]
+  from = "/contact"
+  to = "/contact.html"
+  status = 200
+
+[[redirects]]
+  from = "/thanks"
+  to = "/thanks.html"
+  status = 200
+
+# The oakstreet/ directory is deployed as its own Netlify site on the
+# subdomain. It sits inside this repo, so it also lands in this site's publish
+# directory — serve 404 for it here so the demo has exactly one address and
+# search engines never see it twice.
+# force = true is required. Without it Netlify serves the real file whenever one
+# exists at the requested path and skips the rule entirely — and oakstreet/
+# genuinely is in this publish directory, so the demo was reachable here too.
+[[redirects]]
+  from = "/oakstreet/*"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/oakstreet"
+  to = "/404.html"
+  status = 404
+  force = true
+
+# Force the canonical host. Netlify also does this automatically once the
+# primary domain is set, but being explicit costs nothing.
+[[redirects]]
+  from = "https://www.departmentofone.co/*"
+  to = "https://departmentofone.co/:splat"
+  status = 301
+  force = true
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "SAMEORIGIN"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "geolocation=(), microphone=(), camera=(), interest-cohort=()"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains"
+
+# Asset filenames here are stable — there is no build step producing content
+# hashes — so a long max-age means an updated image or stylesheet stays
+# invisible to anyone who has visited before, for as long as the cache lasts.
+# A short max-age plus revalidation keeps repeat page views cheap (Netlify
+# answers with a 304 when nothing changed) while letting updates appear at once.
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=600, must-revalidate"
