@@ -1,0 +1,25 @@
+# Secrets — never commit. The Anthropic key lives in Netlify env vars only.
+.env
+.env.*
+*.pem
+*.key
+
+# Netlify local state
+.netlify/
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+.vscode/
+.idea/
+
+# Node — the Oak Street demo installs the Anthropic SDK and Tailwind
+node_modules/
+
+# Downloaded Google Fonts used only to generate the social graphics
+oakstreet/src/.fonts/
+
+# Local QA preview build (relative paths). Not deployed.
+.qa-preview/
